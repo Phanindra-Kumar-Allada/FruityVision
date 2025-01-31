@@ -84,7 +84,7 @@ The fruit classification model is built using a CNN architecture:
 - **IoT integration** for smart farming and inventory management.
 - **Augmented Reality (AR)** features for interactive fruit details.
 
-## Contributors
+<!--## Contributors
 
 - **Phanindra Kumar Allada**
 - **Sravya Puthi**
@@ -93,7 +93,7 @@ The fruit classification model is built using a CNN architecture:
 
 ## License
 
-This project is licensed under the MIT License. Feel free to use and modify it.
+This project is licensed under the MIT License. Feel free to use and modify it.-->
 
 ## References
 
