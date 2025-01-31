@@ -28,7 +28,7 @@ def identify(img):
 # Define the file path
 file_path = "nutritional_information.csv"
 
-# Function to find matching fruits nutrition
+# Function to find matching fruit nutrition
 def get_matching_fruits_nutrition(fruit_name):
     matching_fruits = {}
     for name, data in nutrition_data.items():
@@ -74,6 +74,6 @@ while True:
         print(f"Nutritional information of {detected_fruit}:")
         print(output_dict)
 
-# Release webcam and close all windows
+# Release the webcam and close all windows
 cap.release()
 cv.destroyAllWindows()
