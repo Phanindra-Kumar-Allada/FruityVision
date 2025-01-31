@@ -8,6 +8,7 @@ import numpy as np
 import time
 import csv
 
+#have to remove
 # Nutritional information file
 info_file = "./nutritional_information.csv"
 df = pd.read_csv(info_file)
