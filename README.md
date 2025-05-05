@@ -2,7 +2,7 @@
 
 ## Overview
 
-FruityVision is a machine learning-based fruit classification system that utilizes Convolutional Neural Networks (CNNs) to identify various fruits. It is built using the Fruits-360 dataset and provides additional functionality, such as displaying nutritional information for the detected fruits. The project features a user-friendly interface built with Streamlit, enabling real-time fruit recognition via webcam or uploaded images.
+FruityVision is a Machine learning-based fruit classification system that utilizes Convolutional Neural Networks (CNNs) to identify various fruits. It is built using the Fruits-360 dataset and provides additional functionality, such as displaying nutritional information for the detected fruits. The project features a user-friendly interface built with Streamlit, enabling real-time fruit recognition via webcam or uploaded images.
 
 ## Features
 
