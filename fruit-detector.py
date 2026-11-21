@@ -59,8 +59,35 @@ def save_frame():
 def preprocess(img_path, target_size=(100, 100)):
     img = load_img(img_path, target_size=target_size)
     img_array = img_to_array(img)
+    # FIX 1: training used ImageDataGenerator(rescale=1.0/255) in cnn.py,
+    # so inference must rescale the same way, or the model sees
+    # pixel values 0-255 instead of the 0-1 range it was trained on.
+    img_array = img_array / 255.0
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
+
+def lookup_nutrition(predicted_label):
+    """Match a classifier label to the generic nutrition CSV.
+
+    FIX 2: the CSV has 95 generic names ('apple', 'banana', ...), all
+    lowercased as dict keys, while the classifier returns cultivar folder
+    names like 'Apple Granny Smith 1'. An exact match therefore almost
+    never succeeds. This matches on whole words instead: the longest CSV
+    name whose words all appear in the predicted label wins, so
+    'Apple Granny Smith 1' -> 'apple', while 'Pineapple' does NOT match
+    'apple' (word-boundary match, not substring). Returns (key, row)
+    or (None, None) when nothing matches.
+    """
+    words = set(predicted_label.lower().split())
+    best_key = None
+    for key in st.session_state.nutrition_data:
+        key_words = set(key.split())
+        if key_words and key_words <= words:
+            if best_key is None or len(key) > len(best_key):
+                best_key = key
+    if best_key is None:
+        return None, None
+    return best_key, st.session_state.nutrition_data[best_key]
 
 # Identify fruits
 def identify(img):
@@ -116,22 +143,24 @@ with col1:
                     
                     col2_1, col2_2, col2_3 = st.columns((1, 1, 1))
                     
-                    # If fruit is detected
-                    if st.session_state.predicted_fruit in list(st.session_state.nutrition_data.keys()):
-                        print(st.session_state.nutrition_data[st.session_state.predicted_fruit])
-                        
+                    # If fruit is detected: look up the generic fruit name
+                    # (e.g. 'Apple Granny Smith 1' -> 'apple') via lookup_nutrition
+                    matched_name, nutrition = lookup_nutrition(st.session_state.predicted_fruit)
+                    if nutrition is not None:
+                        print(nutrition)
+
                         with col2_1:
                             for i in range(7):
-                                st.write(f"{info_headers[i]}: {st.session_state.nutrition_data[st.session_state.predicted_fruit][info_headers[i]]}")
-                        
+                                st.write(f"{info_headers[i]}: {nutrition[info_headers[i]]}")
+
                         with col2_2:
                             for i in range(7, 14):
-                                st.write(f"{info_headers[i]}: {st.session_state.nutrition_data[st.session_state.predicted_fruit][info_headers[i]]}")
-                        
+                                st.write(f"{info_headers[i]}: {nutrition[info_headers[i]]}")
+
                         with col2_3:
                             for i in range(14, 21):
-                                st.write(f"{info_headers[i]}: {st.session_state.nutrition_data[st.session_state.predicted_fruit][info_headers[i]]}")
-                                
+                                st.write(f"{info_headers[i]}: {nutrition[info_headers[i]]}")
+
                     else:
                         st.write(f"Sorry, we do not have any nutritional information on {st.session_state.predicted_fruit}! :(")
                             
@@ -159,21 +188,23 @@ with col1:
 
                 col2_1, col2_2, col2_3 = st.columns((1, 1, 1))
 
-                # If fruit is detected
-                if st.session_state.predicted_fruit in list(st.session_state.nutrition_data.keys()):
-                    print(st.session_state.nutrition_data[st.session_state.predicted_fruit])
+                # If fruit is detected: look up the generic fruit name
+                # (e.g. 'Apple Granny Smith 1' -> 'apple') via lookup_nutrition
+                matched_name, nutrition = lookup_nutrition(st.session_state.predicted_fruit)
+                if nutrition is not None:
+                    print(nutrition)
 
                     with col2_1:
                         for i in range(7):
-                            st.write(f"{info_headers[i]}: {st.session_state.nutrition_data[st.session_state.predicted_fruit][info_headers[i]]}")
+                            st.write(f"{info_headers[i]}: {nutrition[info_headers[i]]}")
 
                     with col2_2:
                         for i in range(7, 14):
-                            st.write(f"{info_headers[i]}: {st.session_state.nutrition_data[st.session_state.predicted_fruit][info_headers[i]]}")
+                            st.write(f"{info_headers[i]}: {nutrition[info_headers[i]]}")
 
                     with col2_3:
                         for i in range(14, 21):
-                            st.write(f"{info_headers[i]}: {st.session_state.nutrition_data[st.session_state.predicted_fruit][info_headers[i]]}")
+                            st.write(f"{info_headers[i]}: {nutrition[info_headers[i]]}")
 
                 else:
                     st.write(f"Sorry, we do not have any nutritional information on {st.session_state.predicted_fruit}! :(")
